@@ -108,10 +108,6 @@ export default function PhotoGallery({ onImageClick, onReset }: PhotoGalleryProp
     };
   }, []);
 
-  const handleReset = () => {
-    setImages([]);
-  };
-
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -123,24 +119,6 @@ export default function PhotoGallery({ onImageClick, onReset }: PhotoGalleryProp
   const handleColorChange = (color: AccentColor) => {
     setAccentColor(color);
     setShowColorPicker(false);
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check if the file is an image
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const imageData = reader.result as string;
-      onImageClick(imageData);
-    };
-    reader.readAsDataURL(file);
   };
 
   return (
