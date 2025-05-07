@@ -149,11 +149,6 @@ const styles = `
   }
 `;
 
-// Add this after the styles constant
-const styleSheet = document.createElement('style');
-styleSheet.textContent = styles;
-document.head.appendChild(styleSheet);
-
 export default function LandingPage({ onSubmit }: LandingPageProps) {
   const [input, setInput] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -173,6 +168,16 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
     document.documentElement.style.setProperty('--trail-accent', color);
     document.documentElement.style.setProperty('--trail-rgb', hexToRgb(color));
   }, [accentColor]);
+
+  // Inject styles on client side
+  useEffect(() => {
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = styles;
+    document.head.appendChild(styleSheet);
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
