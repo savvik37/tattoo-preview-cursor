@@ -1,21 +1,26 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAccentColor, ACCENT_COLORS } from './context/AccentColorContext';
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { accentColor } = useAccentColor();
-
+  // Handle client-side initialization
   useEffect(() => {
-    const colors = ACCENT_COLORS[accentColor];
-    document.documentElement.style.setProperty('--accent-primary', colors.primary);
-    document.documentElement.style.setProperty('--accent-hover', colors.hover);
-    document.documentElement.style.setProperty('--accent-light', colors.light);
-  }, [accentColor]);
+    // Check if theme is stored in localStorage
+    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (storedTheme) {
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(storedTheme);
+    } else {
+      // Default to dark mode if no theme is stored
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  }, []);
 
   return <>{children}</>;
 } 
