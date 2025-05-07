@@ -16,7 +16,6 @@ const PLACEHOLDER_IMAGES = [
 const BackgroundGallery = () => {
   const [position, setPosition] = useState(0);
   const imageWidth = 120; // Width of each image
-  const totalWidth = PLACEHOLDER_IMAGES.length * imageWidth;
 
   useEffect(() => {
     const interval = setInterval(() => {

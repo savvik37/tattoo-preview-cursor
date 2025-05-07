@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import OpenAI, { toFile } from 'openai';
 
+interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -41,8 +46,8 @@ export async function POST(req: Request) {
     let contextPrompt = '';
     if (conversationHistory && conversationHistory.length > 0) {
       contextPrompt = 'Previous modifications: ' + conversationHistory
-        .filter((msg: any) => msg.role === 'user')
-        .map((msg: any) => msg.content)
+        .filter((msg: ConversationMessage) => msg.role === 'user')
+        .map((msg: ConversationMessage) => msg.content)
         .join('. ') + '. ';
     }
 

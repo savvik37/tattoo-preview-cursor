@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, Image as ImageIcon, Moon, Sun, Cookie, Palette, Plus } from 'lucide-react';
+import { X, Image as ImageIcon, Moon, Sun, Palette, Plus } from 'lucide-react';
 import { useAccentColor, ACCENT_COLORS, type AccentColor } from '../context/AccentColorContext';
 
 interface PhotoGalleryProps {
@@ -123,6 +123,24 @@ export default function PhotoGallery({ onImageClick, onReset }: PhotoGalleryProp
   const handleColorChange = (color: AccentColor) => {
     setAccentColor(color);
     setShowColorPicker(false);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check if the file is an image
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageData = reader.result as string;
+      onImageClick(imageData);
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
