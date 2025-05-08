@@ -258,13 +258,13 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
       <div className="relative z-10 w-full max-w-[98vw] sm:max-w-xl mx-auto px-0 sm:px-0 md:px-4">
         <div className="text-center mb-8">
           <h1
-            className="text-4xl font-bold mb-4"
+            className="text-4xl sm:text-6xl md:text-8xl lg:text-[6rem] font-bold mb-4 vintage-title"
             style={{ color: isDark ? '#f3f4f6' : '#23272f' }}
           >
             Tattoo Preview
           </h1>
           <p
-            className="text-lg"
+            className="text-lg vintage-title mt-8"
             style={{ color: isDark ? '#e5e7eb' : '#6b7280' }}
           >
             Transform your ideas into stunning tattoo designs
