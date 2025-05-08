@@ -244,7 +244,7 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
   };
 
   return (
-    <div className={`chat-interface ${isInitialLoad ? 'initial-load' : ''}`}>
+    <div className={`chat-interface ${isInitialLoad ? 'initial-load' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
       {isInitialLoad ? (
         <LandingPage onSubmit={handleLandingPageSubmit} />
       ) : showChat && (

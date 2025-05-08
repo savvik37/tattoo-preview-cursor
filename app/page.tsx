@@ -18,7 +18,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <h1
         className={`text-4xl font-bold text-center transition-all duration-700 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[180px] ${
           isInitialLoad ? 'opacity-100' : 'opacity-0 pointer-events-none'

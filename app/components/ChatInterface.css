@@ -9,8 +9,8 @@
   height: calc(100vh - 1rem);
   max-width: 42rem;
   margin: 0 auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 @media (min-width: 640px) {
@@ -48,12 +48,12 @@
   width: 100%;
   max-width: 28rem;
   margin: 0 auto;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(201, 201, 201, 0.5);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: 1rem;
   padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(70, 70, 70, 0.1);
 }
 
 .upload-button {
@@ -80,10 +80,14 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
   border-radius: 1rem;
   padding: 0.5rem 1rem;
+}
+.dark .chat-input-container {
+  background: #2d3333;
+  border: 1px solid #3d4444;
 }
 
 .chat-input {
@@ -91,11 +95,17 @@
   background: transparent;
   border: none;
   outline: none;
-  color: white;
+  color: #23272f;
+}
+.dark .chat-input {
+  color: #f3f4f6;
 }
 
 .chat-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: #9ca3af;
+}
+.dark .chat-input::placeholder {
+  color: #d1d5db;
 }
 
 .send-button {
