@@ -6,32 +6,20 @@ import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
-  'https://picsum.photos/800/600?random=1',
-  'https://picsum.photos/800/600?random=2',
-  'https://picsum.photos/800/600?random=3',
-  'https://picsum.photos/800/600?random=4',
-  'https://picsum.photos/800/600?random=5',
+  '/images/tattoo%20(1).png',
+  '/images/tattoo%20(2).png',
+  '/images/tattoo%20(3).png',
+  '/images/tattoo%20(4).png',
+  '/images/tattoo%20(5).png',
+  '/images/tattoo%20(6).png',
+  '/images/tattoo%20(7).png',
+  '/images/tattoo%20(8).png',
+  '/images/tattoo%20(9).png',
+  '/images/tattoo%20(10).png',
 ];
 
 const BackgroundGallery = () => {
-  const [position, setPosition] = useState(0);
   const [isDark, setIsDark] = useState(false);
-  const imageWidth = 120; // Width of each image
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPosition(prev => {
-        const newPosition = prev + 1;
-        // Reset position when we've scrolled one full image width
-        // This creates the illusion of infinite scroll
-        if (newPosition >= imageWidth) {
-          return 0;
-        }
-        return newPosition;
-      });
-    }, 50);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const checkDark = () => {
@@ -55,41 +43,87 @@ const BackgroundGallery = () => {
   const ROW_SPEEDS = [1.2, 0.7, 1.5, 0.9, 1.8, 0.6, 1.35, 0.8, 1.65];
 
   return (
-    <div className="fixed left-0 right-0 bottom-0 h-[1120px] pointer-events-none z-0 overflow-hidden">
-      <div
-        className="absolute left-0 right-0 bottom-0 h-[1120px] flex flex-col gap-4"
-        style={{
-          transform: `translateX(-${position}px)`,
-          transition: 'transform 0.05s linear',
-        }}
-      >
+    <div className="fixed left-0 right-0 bottom-0 h-[900px] pointer-events-none z-0 overflow-hidden">
+      <div className="absolute left-0 right-0 bottom-0 h-[900px] flex flex-col gap-4 py-2">
         {/* Render 9 rows */}
-        {Array.from({ length: 9 }).map((_, rowIdx) => (
-          <div
-            key={`row${rowIdx}`}
-            className="flex items-end gap-4"
-            style={{
-              transform: `translateX(-${position * ROW_SPEEDS[rowIdx]}px)`,
-              transition: 'transform 0.05s linear',
-            }}
-          >
-            {repeatedImages.map((src, index) => (
-              <div key={`row${rowIdx}-${index}`} className="relative w-[120px] h-[120px] flex-shrink-0">
-                <Image
-                  src={src}
-                  alt={`Background image ${index + 1}`}
-                  fill
-                  className="object-cover rounded-lg opacity-70"
-                  priority
-                />
+        {Array.from({ length: 9 }).map((_, rowIdx) => {
+          // Offset images for each row to create a different sequence
+          const offset = rowIdx % PLACEHOLDER_IMAGES.length;
+          const rowImages = [
+            ...repeatedImages.slice(offset),
+            ...repeatedImages.slice(0, offset),
+          ];
+          return (
+            <div
+              key={`row${rowIdx}`}
+              className="flex items-start gap-4 h-[120px]"
+              style={{
+                position: 'relative',
+                width: '100%',
+
+              }}
+            >
+              {/* First group of images */}
+              <div
+                className="flex items-end gap-4"
+                style={{
+                  animation: `scrolling${rowIdx} ${400 / ROW_SPEEDS[rowIdx]}s linear infinite`,
+                }}
+              >
+                {rowImages.map((src, index) => (
+                  <div key={`row${rowIdx}-${index}`} className="relative w-[120px] h-[120px] flex-shrink-0 overflow-hidden rounded-lg mt-[5px]">
+                    <Image
+                      src={src}
+                      alt={`Background image ${index + 1}`}
+                      fill
+                      sizes="120px"
+                      className="object-cover opacity-70"
+                      priority
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ))}
+              {/* Duplicate group of images */}
+              <div
+                className="flex items-start gap-4"
+                aria-hidden="true"
+                style={{
+                  animation: `scrolling${rowIdx} ${400 / ROW_SPEEDS[rowIdx]}s linear infinite`,
+                }}
+              >
+                {rowImages.map((src, index) => (
+                  <div key={`row${rowIdx}-dup-${index}`} className="relative w-[120px] h-[120px] flex-shrink-0 overflow-hidden rounded-lg mt-[5px]">
+                    <Image
+                      src={src}
+                      alt={`Background image ${index + 1}`}
+                      fill
+                      sizes="120px"
+                      className="object-cover opacity-70"
+                      priority
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
+      {/* Add dynamic keyframes for each row */}
+      <style jsx>{`
+        ${Array.from({ length: 9 }).map((_, rowIdx) => `
+          @keyframes scrolling${rowIdx} {
+            0% {
+              transform: translateX(0);
+            }
+            100% {
+              transform: translateX(-100%);
+            }
+          }
+        `).join('')}
+      `}</style>
       {/* Top fade overlay */}
       <div
-        className="pointer-events-none absolute left-0 right-0 top-0 h-[1120px] z-10"
+        className="pointer-events-none absolute left-0 right-0 top-0 h-[900px] z-10"
         style={{
           background: isDark
             ? 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0.2) 80%, transparent 100%)'
@@ -98,7 +132,7 @@ const BackgroundGallery = () => {
       />
       {/* Bottom fade overlay */}
       <div
-        className="pointer-events-none absolute left-0 right-0 bottom-0 h-[1120px] z-10"
+        className="pointer-events-none absolute left-0 right-0 bottom-0 h-[900px] z-10"
         style={{
           background: isDark
             ? 'linear-gradient(to bottom, rgba(24,24,24,1) 0%, rgba(24,24,24,0.7) 10%, rgba(24,24,24,0.2) 30%, transparent 60%)'
@@ -135,6 +169,7 @@ const styles = `
     background: transparent;
     z-index: 1;
     pointer-events: none;
+    overflow: hidden;
   }
   .dark .border {
     border: 2px solid rgba(255, 255, 255, 0.2);
@@ -157,10 +192,23 @@ const styles = `
     z-index: 2;
     pointer-events: none;
     transform: rotate(180deg);
+    will-change: transform;
   }
 
   @keyframes journey {
-    to {
+    0% {
+      offset-distance: 0%;
+    }
+    25% {
+      offset-distance: 25%;
+    }
+    50% {
+      offset-distance: 50%;
+    }
+    75% {
+      offset-distance: 75%;
+    }
+    100% {
       offset-distance: 100%;
     }
   }

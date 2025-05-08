@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     const response = await openai.images.edit({
       model: "gpt-image-1",
       image: file,
-      prompt: `${contextPrompt}Add a detailed tattoo to the image: ${message}. The tattoo should look realistic and blend naturally with the skin. Keep the original image exactly the same, only add the tattoo.`,
+      prompt: `${contextPrompt}Add a detailed tattoo to the image: ${message}. The tattoo should look realistic and blend naturally with the skin. Keep the original image and face of the person(if present) exactly the same, only add the tattoo. Make sure the photo isnt rotated either and stays the same rotation as it was uploaded.`,
       n: 1,
       size: '1024x1024'
     });
