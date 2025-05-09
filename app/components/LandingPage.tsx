@@ -6,16 +6,16 @@ import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
-  '/images/tattoo%20(1).png',
-  '/images/tattoo%20(2).png',
-  '/images/tattoo%20(3).png',
-  '/images/tattoo%20(4).png',
-  '/images/tattoo%20(5).png',
-  '/images/tattoo%20(6).png',
-  '/images/tattoo%20(7).png',
-  '/images/tattoo%20(8).png',
-  '/images/tattoo%20(9).png',
-  '/images/tattoo%20(10).png',
+  '/images/tattoo (1).png',
+  '/images/tattoo (2).png',
+  '/images/tattoo (3).png',
+  '/images/tattoo (4).png',
+  '/images/tattoo (5).png',
+  '/images/tattoo (6).png',
+  '/images/tattoo (7).png',
+  '/images/tattoo (8).png',
+  '/images/tattoo (9).png',
+  '/images/tattoo (10).png',
 ];
 
 const BackgroundGallery = () => {
