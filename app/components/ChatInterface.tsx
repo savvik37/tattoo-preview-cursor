@@ -332,9 +332,34 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
 
           {/* Model label above chat input */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-            <span style={{ fontSize: '0.7rem', color: '#888', fontWeight: 500, marginBottom: '0.25rem', marginRight: '0.25rem' }}>
+            <button
+              onClick={handleToggleModel}
+              className="model-label-button"
+              style={{ 
+                fontSize: '0.7rem', 
+                color: '#888', 
+                fontWeight: 500, 
+                marginBottom: '0.25rem', 
+                marginRight: '0.25rem',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '0.25rem',
+                transition: 'all 0.2s ease',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = model === 'google' ? '#2563eb' : '#4c754c';
+                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#888';
+                e.currentTarget.style.background = 'transparent';
+              }}
+              aria-label="Toggle model"
+            >
               Model: {model === 'google' ? 'Google Gemini' : 'OpenAI DALL·E'}
-            </span>
+            </button>
           </div>
           <form 
             onSubmit={handleSubmit} 
