@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type AccentColor = 'blue' | 'purple' | 'green' | 'pink' | 'orange';
+type AccentColor = 'blue' | 'purple' | 'green' | 'pink' | 'orange' | 'white';
 
 interface AccentColorContextType {
   accentColor: AccentColor;
@@ -36,6 +36,11 @@ const ACCENT_COLORS = {
     primary: '#f97316',
     hover: '#ea580c',
     light: '#fb923c',
+  },
+  white: {
+    primary: '#fff',
+    hover: '#e5e5e5',
+    light: '#f3f3f3',
   },
 };
 

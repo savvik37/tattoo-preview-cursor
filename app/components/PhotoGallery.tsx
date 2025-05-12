@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, Image as ImageIcon, Moon, Sun, Palette, Plus } from 'lucide-react';
+import { X, Image as ImageIcon, Moon, Sun, Plus } from 'lucide-react';
 import { useAccentColor, ACCENT_COLORS, type AccentColor } from '../context/AccentColorContext';
 
 interface PhotoGalleryProps {
   onImageClick: (image: string) => void;
   onReset: () => void;
+  model: 'current' | 'google';
+  setModel: React.Dispatch<React.SetStateAction<'current' | 'google'>>;
 }
 
 const MAX_STORED_IMAGES = 20; // Maximum number of images to store
@@ -67,11 +69,10 @@ const ConfirmationModal = ({
   );
 };
 
-export default function PhotoGallery({ onImageClick, onReset }: PhotoGalleryProps) {
+export default function PhotoGallery({ onImageClick, onReset, model, setModel }: PhotoGalleryProps) {
   const [images, setImages] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const [showColorPicker, setShowColorPicker] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { accentColor, setAccentColor } = useAccentColor();
 
@@ -114,11 +115,6 @@ export default function PhotoGallery({ onImageClick, onReset }: PhotoGalleryProp
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(newTheme);
     localStorage.setItem('theme', newTheme);
-  };
-
-  const handleColorChange = (color: AccentColor) => {
-    setAccentColor(color);
-    setShowColorPicker(false);
   };
 
   return (
@@ -187,36 +183,25 @@ export default function PhotoGallery({ onImageClick, onReset }: PhotoGalleryProp
                       <Sun className="w-4 h-4 text-yellow-400" />
                     )}
                   </button>
-                  <div className="relative">
+                  {/* Download All button */}
+                  {images.length > 0 && (
                     <button
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                      className={`p-1 rounded-full transition-colors ${
-                        theme === 'light' 
-                          ? 'bg-gray-100 hover:bg-gray-200' 
-                          : 'bg-[#1a1a1a] hover:bg-[#2a2a2a]'
-                      }`}
-                      aria-label="Change accent color"
+                      onClick={() => {
+                        images.forEach((img, idx) => {
+                          const a = document.createElement('a');
+                          a.href = img;
+                          a.download = `tattoo-preview-${idx + 1}.png`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                        });
+                      }}
+                      className="ml-2 px-3 py-1 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium transition-colors"
+                      aria-label="Download all images"
                     >
-                      <Palette className={`w-4 h-4 ${
-                        theme === 'light' ? 'text-gray-700' : 'text-gray-300'
-                      }`} />
+                      Download All
                     </button>
-                    {showColorPicker && (
-                      <div className="absolute left-0 top-full mt-2 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex gap-2" style={{ zIndex: 30 }}>
-                        {Object.entries(ACCENT_COLORS).map(([color, values]) => (
-                          <button
-                            key={color}
-                            onClick={() => handleColorChange(color as AccentColor)}
-                            className={`w-6 h-6 rounded-full transition-transform hover:scale-110 ${
-                              accentColor === color ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800' : ''
-                            }`}
-                            style={{ backgroundColor: values.primary }}
-                            aria-label={`Set ${color} accent color`}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}

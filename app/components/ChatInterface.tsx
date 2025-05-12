@@ -5,7 +5,8 @@ import Image from 'next/image';
 import PhotoGallery from './PhotoGallery';
 import LandingPage from './LandingPage';
 import './ChatInterface.css';
-import { X } from 'lucide-react';
+import { X, Download } from 'lucide-react';
+import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -30,32 +31,54 @@ const LoadingSpinner = () => (
   </div>
 );
 
-const ImagePreview = ({ src, onClose }: { src: string; onClose: () => void }) => (
-  <div 
-    className="image-preview"
-    onClick={onClose}
-  >
+const ImagePreview = ({ src, onClose }: { src: string; onClose: () => void }) => {
+  // Download handler for the download button
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const a = document.createElement('a');
+    a.href = src;
+    a.download = 'tattoo-preview.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+  return (
     <div 
-      className="image-preview-content"
-      onClick={(e) => e.stopPropagation()}
+      className="image-preview"
+      onClick={onClose}
     >
-      <button
-        onClick={onClose}
-        className="p-1 rounded-full transition-colors bg-[#1a1a1a] hover:bg-[#2a2a2a] absolute -top-3 -right-3"
-        aria-label="Close preview"
+      <div 
+        className="image-preview-content"
+        onClick={(e) => e.stopPropagation()}
       >
-        <X className="w-4 h-4 text-gray-300" />
-      </button>
-      <Image
-        src={src}
-        alt="Image preview"
-        fill
-        className="object-contain rounded-lg"
-        priority
-      />
+        <button
+          onClick={onClose}
+          className="image-preview-btn image-preview-exit absolute -top-3 -right-3"
+          aria-label="Close preview"
+          type="button"
+        >
+          <X className="w-4 h-4" />
+        </button>
+        {/* Download button */}
+        <button
+          onClick={handleDownload}
+          className="image-preview-btn image-preview-download absolute -top-3 right-8"
+          aria-label="Download image"
+          type="button"
+        >
+          <Download className="w-4 h-4" />
+        </button>
+        <Image
+          src={src}
+          alt="Image preview"
+          fill
+          className="object-contain rounded-lg"
+          priority
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showChat }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -66,6 +89,14 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const originalImageRef = useRef<string | null>(null);
+  const [model, setModel] = useState<'current' | 'google'>('current');
+  const { accentColor, setAccentColor } = useAccentColor();
+
+  // Set accent color based on model
+  useEffect(() => {
+    if (model === 'google') setAccentColor('blue');
+    else setAccentColor('white');
+  }, [model, setAccentColor]);
 
   const handleReset = () => {
     setMessages([]);
@@ -100,9 +131,12 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
       const imageData = reader.result as string;
       setSelectedImage(imageData);
       originalImageRef.current = imageData; // Store the original image
+      setLastGeneratedImage(imageData); // Ensure uploaded image is used for next generation
     };
     reader.readAsDataURL(file);
   };
+
+  const handleToggleModel = () => setModel(m => m === 'current' ? 'google' : 'current');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,13 +154,17 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
     setIsLoading(true);
 
     try {
-      const imageToUse = messages.length === 0 ? originalImageRef.current : lastGeneratedImage;
+      // Use selectedImage as a fallback if lastGeneratedImage is not available
+      const imageToUse = messages.length === 0 ? originalImageRef.current : lastGeneratedImage || selectedImage;
       
       if (!imageToUse) {
         throw new Error('No image available for generation');
       }
 
-      const response = await fetch('/api/chat', {
+      // Choose the API endpoint based on the selected model
+      const endpoint = model === 'google' ? '/api/google-chat' : '/api/chat';
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +190,9 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
         ...prev,
         {
           role: 'assistant',
-          content: data.message,
+          content: prev.filter(m => m.role === 'assistant').length === 0
+            ? 'Tattoo generated! You can download your images by accessing the gallery on the top right of the screen or by clicking any image you see, then download on the top right.'
+            : data.message,
           image: data.image,
         },
       ]);
@@ -178,11 +218,12 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
     }
   };
 
-  const handleLandingPageSubmit = async (message: string, image: string) => {
+  const handleLandingPageSubmit = async (message: string, image: string, landingPageModel: 'current' | 'google') => {
     setSelectedImage(image);
     originalImageRef.current = image;
     setInput(message);
     setIsInitialLoad(false);
+    setModel(landingPageModel); // Set the model from landing page
     
     // Add the initial user message
     const newMessage: Message = {
@@ -194,7 +235,10 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      // Choose the API endpoint based on the selected model
+      const endpoint = landingPageModel === 'google' ? '/api/google-chat' : '/api/chat';
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -217,7 +261,9 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
         ...prev,
         {
           role: 'assistant',
-          content: data.message,
+          content: prev.filter(m => m.role === 'assistant').length === 0
+            ? 'Tattoo generated! You can download your images by accessing the gallery on the top right of the screen or by clicking any image you see, then download on the top right.'
+            : data.message,
           image: data.image,
         },
       ]);
@@ -253,7 +299,7 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`message ${message.role}`}
+                className={`message ${message.role}${message.role === 'user' && accentColor === 'white' ? ' openai-user-message' : ''}`}
               >
                 <div className="message-content">
                   {message.image && (
@@ -284,14 +330,20 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
             />
           )}
 
+          {/* Model label above chat input */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            <span style={{ fontSize: '0.7rem', color: '#888', fontWeight: 500, marginBottom: '0.25rem', marginRight: '0.25rem' }}>
+              Model: {model === 'google' ? 'Google Gemini' : 'OpenAI DALL·E'}
+            </span>
+          </div>
           <form 
             onSubmit={handleSubmit} 
             className="w-full mt-4"
           >
             {!selectedImage && (
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center justify-between gap-2 mb-2">
                 <label className="upload-button">
-                  <span className="material-icons text-lg mr-1">add</span> Upload Image
+                  <span className="material-icons text-lg mr-1"></span> Upload Image
                   <input
                     type="file"
                     accept="image/*"
@@ -299,10 +351,11 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
                     className="hidden"
                   />
                 </label>
+
               </div>
             )}
 
-            <div className="chat-input-container">
+            <div className="chat-input-container" style={accentColor === 'white' ? { background: '#fff', border: '1px solid #e5e7eb' } : {}}>
               {selectedImage && (
                 <div className="relative w-10 h-10 flex-shrink-0">
                   <Image
@@ -321,17 +374,19 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
                 placeholder="Describe the tattoo you want..."
                 className="chat-input"
                 disabled={isLoading}
+                style={accentColor === 'white' ? { color: '#23272f' } : {}}
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="send-button"
+                className={`send-button${accentColor === 'white' ? ' openai-send-button' : ''}`}
                 aria-label="Send"
+                style={accentColor === 'white' ? { background: '#fff', color: '#23272f', border: '1px solid #e5e7eb' } : {}}
               >
                 {isLoading ? (
                   <span className="loading-spinner-icon"></span>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={accentColor === 'white' ? '#23272f' : 'currentColor'} className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                   </svg>
                 )}
@@ -339,7 +394,7 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
             </div>
           </form>
 
-          <PhotoGallery onImageClick={setPreviewImage} onReset={handleReset} />
+          <PhotoGallery onImageClick={setPreviewImage} onReset={handleReset} model={model} setModel={setModel} />
         </>
       )}
     </div>

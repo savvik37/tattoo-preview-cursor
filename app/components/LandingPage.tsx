@@ -10,7 +10,6 @@ const PLACEHOLDER_IMAGES = [
   'https://lh3.googleusercontent.com/fife/ALs6j_FGy1bRhTBzfwtvNyG0OJNmwxpFjrvN3pxIXLn3Kn5c7IPGX7uSsbZtOA4PMlkZ8NXO90IZiK2omua70biZ0qOgcuHoXvwKZNZlRItFubxQhachWK3HCJevvz-OpDg9QRPSX64lxoq-h0hmXo6odwblw1g3_5fKBW8lFJGXln9BUnIZlwsckI2dkHszjMyI4mGxB3eRIoPKseF-1c-coufWiQjzLnqy3oSZNq-nM_ayqX6-TacxuHnI3HucKN-OmVUTrmknJf3F6-J7gOvMKRVL_b_PnXowopRNn7SKHOZUFdlpVEH7hzZWv4K6sGQmnIE4_Ym_8eSLkJi_j6spjtvkLjvSOMGCssiZYcILuO5xadJnJhhEZjOiUuGecE_RkZ3ggNwypCuR7K6s8c_jfqLZHFWO0oTIq3b06QhjK4wSar5fyikscZd9gBnATmIAMePyOIZDP6mb4jLOoB3WXXPvnuPdBuqZphC7DNu8_Lq_gxRvFYndPusS04BVi1gfnJzAjN6JcbI0DT_mLbf__aa_NeHl_Zv9Oyzpp0qRK1eK384o6zIGI9Zq5s9g5IY7pt7pOeSi5BGTCopqUg0RGa3-famQl6H2QEDoSo74KQCxQobthtJADQrTaUa3B52m6crcDH4Ds3MBNZ5ZFrTuk3xAJYDB_wXl68fNKheFzKG2wYTbdYVPb-rMOCTPmilYXSuOFkqbgBOb5TznFZW7Xlgcc_obDIAsqSVeRMyYWmdB8Z9_fmkg6mYymhZykSr2Oyxgq0xIUn6W9y2v_nK-spNRP-2IrOxdg8Kph4PiqVSGTHvNAS-EzDfzT33bPMCS2K3wdqMV2TZvNxmYMQXNsLs52GO62gEkg5lk4jCjbzoe45PZLPexYHb3XZw9im7R2XLssa6LGTIuvt7bHOjtBe2XYnpdgAjVOP7wacvtqi1_6xvvxLJ0Hg_mF4ALuZIGtJI0hARU3ZCEvGFpk4IexfhQcGbChKaWRZcheOqrtN3vPxmuQvdRdl6w_Ldl5OK2ljI8Jw71IT72KPzwboT9n9bSZTKXPg62hMwd-kzdAF3VI67Fmp54qB9PnbEXEV3gFV2RbdzWBehh3A7ZS3saKuVejfJuZgAILsTNVg9EjnbLOqrwaD5NpV4JzC0L7E0PPlngj3FYaPbQ0tQgMxGwSstaafIOurCvR1gg4Aim7h2NaXUWe1Mz1kEysFOj9JZFmEkXPkVexy-NrqG-g6Muf6b3zreAFpZWDt8Opnu2EhhOcYmbzav2UQA7B7e4xoad670_UAYHhrBvrFbVSgf3q9u66TUYLEVXYhDJZ_dGpBGzDxoGaz5ytTkLImSq2dj-HV7J4rql1_xHapgUZlbFxAxLN3nrqmJk-1oEZsE7U5t9Zck4BWoPR_ZQRbSn9RhngP_EVkpCZu4GEo93urmCR4tjM8WWR84QSQMutdxbineWOnXg2CKJhZ61A-EDyzNRdNwNk9g0ELVtbCpA8QTi0a52KbeUkNyUwlYTUUrjKL6mB2EdvBXup7PLxup43uxzsJJYa5KWTTyb3bRNe86wczGaFgqdKXXRSAYGQ9_lkhK5AGjK5vuIDtz5E1wNghlPFVLRbnBcU99bime_nsry-iA46FjIh-gz5ayw0-Z4n_modpC1HsSr342z=w1372-h933?auditContext=forDisplay',
   'https://lh3.googleusercontent.com/fife/ALs6j_F9LrL6Dcupy4ULct15FbHk5Pb9RbBQgebVS9vKIrkVy9Oi1Hu4DfdUKEZm-33X6waBeICutGrZo9plVljc22VbiWf5a35O_Enua17x0PdtRQQiAzT__Hcw3PHTBbIMBs_IokXSkD82onZHQyNvXsCGjSqOHoQMQhBEcOVPr9qDfwKmWWE4UYwkg4zyS0ltUtkZFcDGFRayUyi-7ZOVbjdcAH44kQ84F5ffQGWZkHtNEzf5KSE6gXB7BWkk8W_KdaBkMpwGVpDrXczpyxkLLH7HOQv9O6U-sIS1QFxgUWVE3ec8IhZtD_YiBx0uFmqABQK1OqrJ0czSyctwaZWVOSM5QC7VWyq391LqpCEuroVNQ8nvrJVAoBur1a4SZ_FVkGprwovbBncksT6C-tH5IEvjw3_rW2Kron_huvvHymjQZh4hJ5Uuywas4dWdR-47oGGCCblNk80Zvnmn8QJxnCj7sl0OfzqtGmYuupL1hLIcwRI8Dwz_4zSk3v7nr6ObLHwTDIN2UpGjVq2Zcm1mLWtexxd7ODUnGgFinNzkGrayQaX9zoDMjGVChFX6L8wM_5Dn63Dmw-xBp7lYLamyeyJ0hsILwr2ts4gwlRZiXDiEDAAnfbPXsMOt4iq7uYPZdReesWW_vPTEYAn_65pwVtFWB2mFLu8N99N4bwfjt4xElhLntC8EbO_KgwpsE2SiIuinGKgsiBgjGk0SYlymPKi36Mqobj1ZWk9DAQ7ZVwkPSJcRjKqChukCENLaEDa85UPYaUi5vNe51_XIWi9EVYAAF64HvjnPP5dMJfIOqMsq88WDVQZDm99wA3rikPBdV-Xqg0f6VwOb0rf0YRSYQe4zV9vDHHl_uCk_H4zMdwCxzVUqT9YGNiIPTawLywPN8AuQ4WgG5QunXM7RzsQMz9FAkuSlkNr2dzmHajoW13vTzPO0-V0Qj9fasbVW53_jLuFQReVtmEBCXW1FZr8ae2lNjDvaTZ3poBJa7Zr8RSYL7VYC6kJHdBeO8bMLyldM6DCfg9Pj99H2K6TfOzHv0VLDT2tjsR-ZcUAv7pLq-jTp3MRjP6aZ3VVZ5OftIQOLcH_iRg5X23G6U95hgR58jJJRua-JmiOGee0jvO_OlXcpkyVNfY3WrkS6Yf3PiW38SOYciEdUwSvJtWMqkheBpYcvCQDrvJzqlPsfNjcW6RPajg1bU-6kspLsmrlJTLIUQcKKMlnY3AD3MO4j3WOhP0G0lS8ZYSFUHyQY-ddSwj_VZuK3w23TBrOsAqJMU7KaLU4Oscrd8GklZN0Nf1s9RjbupRIuoeZcDGy-LJnxRGkdtJ7j02lp2jG-GCslGKSV9u1seq4Ms_5Ok7Oh_OpbNwfqtzhC_N-sISbN5kFdIi-r5pLdRLEPI3ulTtoaIf_j7nDW3kmmlWoRAbQVRPeI3RxDOEp1N9mdxvE7UyeprETsVw4pK5L0sfrnFxKcZ9y9DbTv4ZSuT9Ja4q0NpSHJnIuAlImNlk5YTmphECfNZxs3SyuDD3lP7fEdctWTQs7_K5_9fwmcr_3agZ7Nw2b3AHdLPFtTFk-981i46uSMt9uz8eQJhEN_3DputKSuLfvPuLnG2Txc19yMw2lWVmjk9mkrpXrtV9ckIqF6FsmWaPbZIDAtulh9_Gc=w1372-h933?auditContext=forDisplay',
   'https://lh3.googleusercontent.com/fife/ALs6j_HZMKpsXt_rs891m11xsOtkKn2IqnWgtcJ7HthJoKW_MgW8BV9Xufq4isH86iN7kVBrLZL3zq-13YwIJsqTRcXc6v1PE3oTF7N21orjS-kv-l29ovnly5y-oiw5lVnq-b6VEBN6Nhel-Pu7Fu8BG8VCZYSFANzYdYDZvB1layaGpfrk-_VmBEGauLrsv4KvL6q8e_Obyll0ZFK8Ne7ci2BgdfNdNvJUgURfFsMLFVUA_1z_tQWkZKVs1do4aqv8CzZnUICPMRaaMWZH74VBYtDE1HNaCa4AIURK8mCMvJT5BkD6_BlK8AmK-Snd3seS3qyVUh59oTj1kKWcTg3a6nmfNTKsJI3nItb2azKsHxvyA7JiXPDyvy9N9Cy60XYIqwLHZJporJGsAnsQBoxdfIkzZvrRahSfDppMISnGXWbMTj2TWYAWXF5DezqKvj_58qb32_kX39mwz67GKSHypbamYGXcVLHzBv8edDJIqc5Tk4IRd2UugL3y2osxCLf6T1ZrtrFJUqWHVHKUzqqR69ig8QqIxIwr8lafQ9hIJbYchY8TLvtqRVZ00Rs9vgjEjMw_gT5DQDv9AXl72f0fM5FN6Ork__dTya2vk12Vysod8DtdzOHA579tIVhh_bIW3fZtMc20dj13WcYx8yHTciwIkJDxsr8rzIDDS0Sw4OhBeeYNlI99YOQGf--Zhk1VDve5bmckwUHwIr3fNgWeQWpmKEHbynC-9ZjlwjQJH0t_4i6ICVZ89d1Asl9gO1ycr2X6b-tdSYCG4T3o7mC6WdSg_IrchDx833X2WmBt3xRV16SKmsvn8hdCdGg026UoJAZso2_0O7fJqj3NcVQIQ0jMsnn_pE-TceryUrBtEqFgsGKFRgp541yh8P2NhJ7rV8rOWdkegOztz-F_awdKZp7Uv73sAP57xIJCEjpbACaKB-k2xowhZg8RqEK9c55mQe2lCaLilfmkO24A-Np9QDui0OTd_JxaocTBMvtQWxiZHpwuTURD-NENCnkaX983icL-aiFOH7XcrxHsGWL7EwsERdHNwpOYM61OVijpxVC7hrJjtR15H4Je8urVI7wt1wBneK82lvbz1AtTS2_YUZLuYwzrQrHNZlJUoWcBVp1FR4wx-oynA45RbBZO0LfR2SrMph3qBBHNWkMNpwQn9Dobhm2zHhZpJHGxGHxxhEaMnpjXDuv-gMjJ-GjTOODcf1vdMTYCn3_OvpHfbgz80dPmU0PY3AF-MtIe8IIpKiL49agb2CWJ8DWSyXmh6PP823h91JQFEcPNfcxWFXjv07di7RPepzQcR0Hdz2xW0CGQm1CJ52-G6XdA2UPppY8M9wRNBUZiew_J_VkRGxXPUd_eHKf06TLjaTohsu2BCWFq_SWvK0D_HfXAMFU39nWFd7Cm_luQahfNcMIBLXfyLVdAg6I_EzjIgkZlhlqvXEAZeMEsJGLc2JV3QImNK8j7Sw-giMJXY4aPGwd12VmaRAOXEwE8QGaX7LsrT8eXvF40sG6haPjx3hQeWupoz8s3VsJ8O-bB4i7MP-ydRIUumedy02d5LIORpZEbOgtRuIuJpBT1i26zRzEjZSjS8L-7QKpfmR1E8AMgFG29Tb4pDZWll6iefnwYlZh1phYKI0m_AooxoJej_eKW=w1372-h933?auditContext=forDisplay',
-  'https://lh3.googleusercontent.com/fife/ALs6j_FrRJalh5CUNV2mc7fqvAH3rR6_AtBBaFhMmT6ow-MROWf85KIDeHtGiZ2Iw7OKOGpIIaJcv4w4vLVS1xKi6HHC_EGfwuoPfS2TTY15KLpuOzAmWlWxqGvGMbygSQA2mqdygENa4o3TWNKwupSE87YWx7R4SNNhDRJ7aHGzyOmaa93qi0LhMy9CeXZjgU2e4k7nupO8yo0YfzP-fu8Rx5djtlzuaOkpGWldGLmdZKm6uzqpQqFnZl93f5REYvNHVlh0aHVlw661CUl-hIWbh2gVAtPDQOZqt9fa4jz3I2NTfVbaT_MZMhYEMfpwREkijHjGfX2cL0Ei0oTsouRHVG4EWvAX-w-pTQJ-YTdezEeobqCy0NcRZqA_Es6T6RNrBbtYb6Iv9ovH_Z_XeUjj3DZzqdSN0zXCo7_jfj51u5AcVL4qqJg_l1B-35V4PY0HvLN2rYmys6FO0X97nUGbHGizeXW1LYPKSTNHGRU3O-WkVGYRbug1dIdLgtgwyzxMUi2sHa8aoMD1Ip8dbIaAhDmhdRYx_2y-6rc9VdPFlbmlsUclozQvOap5Pl1Ea01ttLGUr-BaJS-CnX6TLk_MFQFz5J8DVL6NexqNTB84AI2gaNfs8vR10QichFlkArl8chGgrQHt_rGAAf_dcxyMQvZ7XDsxTj4jqKHTiAJRkT6Y3LlODptVEjpwT0EIxjnrkoN6SG0im217KARvwy0f5Fo79kSuHJpln088I6i1zW8YzBnuZ3iaqnn2E2LgkeMzqZq1RPMP8eb7ATPXXJtqWtNCRWyf6PMvAU_AQ4MKv9fQzsFU1axQOCRgTMUsVqgVWONx3kQhB0hqMB-2xinSnAcvFYmQZHgEFG_q96fewdN4_kLscqW2iPpjdpCD4vH0bAA7wAme1iur54rMscchywHx5H0scgzoZyxae2eUIKbKcJR7WCcSq1Ne0j77PijVXPtC1epL0C4cc3Gl3wmPI3XEQytDGxxiRzx3ZOO-hTz8q0tLaT8jsCVM0_zRM0hq5GRKcykAfdMHNvsBLNFiIF6vv3smYuIpoULM1XglCkDIxu-Ou7HiqKta7idXtBFZEnoEfthErlKuBcYmxZcJNIalITzi0KGJvg7j0yaXC9xeo_YwKUXqgWFTygJj_3nXwcBOkw3C68bfqxMryft14tOYUtfPvPnYgDYO2RZJv6XemjwKNX3f9mvCAdsDM-Jr9RLKMAMdQeyKHUP3wBco7wMsQDgOWlizy85oYN6kDf16FalDQeZXHjAubE_5CVrTq6VSjD_OVYExWisvKofQZrLyq0h-FP4RBz8OG1n8EbbAGwei2W58aummO9uJ68c3nOYdoFugU1RDsipZVEIqYYtJcBEfgrY2ltxqkEnIuOaJSZDKdBOlKc_r3SsQFQKuB5m3L-VGzfpxhyNcj9XwMbhcnt0uyHX4l4UDi6Bf0U4eGfqs8s7QPk2NB91FOT2eivyXnbXah_HKyWlaoOfxfOKXm6KIUOjPyXnMLGOjfznE261waGpr9duFv12hco3_AtIXcfuhU9gjvhT2p0zdXTOmiLHjTQQXR9jOOOUhP4Mg0Xp5YiVRwtYnxJm-B_2DgyiPjIhxgj-b5th1snF_V8C1PjlPs19QMFvprLv-QQoPaTR6PmS9OxQ9=w1372-h933?auditContext=forDisplay',
   'https://lh3.googleusercontent.com/fife/ALs6j_EDQf5kMYrpT7xIXyW739P3YMyYdHLhb1iLpHQh3B0LfmaPLCh4dm0lkrbHN_2W_UOdBL00NOtrTGmXHwNKbNGQpiltWOXICz7JCyK-uNrmVMH0nv7MK4NmvC56OukxJs3YxjlkEHt-NRspgJ8cYBkB7tB68cEJlw0cK8gKZ6ucrnwNE6-urFauO28WVx9FGMrvwKjer6dCTA848RXdIA4x1Rb1B_ed-l6ghn30GHHlhVOCmQVEacg9BisAYbIQSt35M7qGs7zZm0yUDZqdXTWCJ3K-ZFxJtd-MOEJXaOf8M10quP36P0_-12VoeduD0PbfG6mnCmvIi95xAcsQSiydfB0X99oWGER13hQn3vK2b3RIyiDE0tTQQpcGqKW7nshe0kPEj8S56LE04uHXqHcivYeBFCf6Gvbifp1JUhpaXGSYzemm2ymKi5dszxGrt9Ig9pWv8YLzswquEm4UbwxJw_H3HdAtUryPtD622kz2wlDTZSDhpQyUJJaneNdgsluFyZfQQqrF_1pgqqvCd1us5kzt9Fzu4QiKKjyfrutkbBlxRftOHt32W-tBUr4ab_HYP16zvz-FZF6ZcYN9281LcrDpMae7cDfH4ptpyoPsgvIYNEBDUaLfxb6OzCo2z6U-da5iWEakUPtnse_5XZJAV0v_I0-W0gWXBuJ94oSXlKBuRVPH0gNeu9r2MfzaIxk3qL_QZQgSjCmvgT44Ja298QSAEtLFvsG4whgQ1VZGcAY5s50Ohzsjbm6yMiM9mFFBoqSN2c6D21puXeFwyfzJmDw7I_UEPdJbsLiIS8lTNhANTCbist2rkU-4_CXesqEIcBwxOB4Qi_nWJRp8JcSbcXfIZiI9r5QH-WcpnCbMCGfwILTqZugoRZfXRS6UffFCTkFl1EIMa96O5dNO4G4zvkg8QsTPftqDc-FL5AlpJFLv9yDlnOy7_-ofdp1_jLmnlPPBwIlJoKyWEQr5EKmZJG3DuSGPbrcL4CEGNeuKvJ7BpsNNpVmxj49g_DBc2icqYIymDpjNsgfyliJYo_FK7WS0YGN4p8EzwiYxqZcdYY80l_nMSAL0-V8w8XZ9OIRP_AidPB5a0GwBCrPviOfzbkoFdrGD_Blx9odrpaPjxUiUIRWX6FxaVKuNMLWJ-Ugh2J1m1rs9KqZfIaAmu8PdSiiNFl7HmxJeFNLoQus7GDamRllweYpZ9uPRJAuDjXQVO_hHd_deV0wiJaWY962N-cuksREqVkM_Uyig6c-ivJONqAF9T6zi0lbrpTIUGayc4U7Afoj3yjs0wH_QHBRWgy-h-jD0QNq5POAo8117U8SoE3_CREjeAkNKN_VfIGq1o1ANJcTXQUYW1M6250xNkOWbSlD_1NW7Lw0ZbfYjLCJ3tQlfgDffMXjhm3fW9c20gfsk8AXyUqyQGT0vE-c8XPfCadGXTkFtquXYHxmi7FxGDtvZOl-oclWrGwMIMDxpM7luf0FwWwcrf55_jA6W5xGefXYWe_9-HEp7qC9RnRssq0LWwrKHZgpT2t_xFRoPwux-wSD8Jg8MuWFPwKmBAk77HVZAt5npykRCSxtdG8UJnfmbknGf54j7HP0TVaWWM-lyvMYCB2tV5IwGp7NeMM0EZheKBtYheQzv2y3HI7pCIrQIaxCR=w2000-h1258?auditContext=forDisplay',
   'https://lh3.googleusercontent.com/fife/ALs6j_G1VcqFzDkPUm-TXlaW8EDmv2_Q2IiEex0k5nDJm-zNHv8ElRGYetK25v9wPJ0u218xqEzoWlwySymKdw1QAk8xZ71cYPDZSJNFqQXdhfYvZv4NbYIptyDBqDN5MvaDx21y5nPNG8JtJa7clSLzzy1cdK3VHRX7VJyPhfc_3oASZifV7r4geygxpfsLHaG7Z4u77sYxMgYqladWyA20OyLnJzttsJhOhBRJdORqXTg4-4J4GFLAuiejoXBB4bLgD9hmiJr9-XfvrH-nz2KtnpjigXLxisaPsDMbjwEXeUzijop-mjp49h3_BES_mL8BiAQCMoc1WAVMbPLz_y77izuO372Fb2v6QNdwrM805kpfzqm4bSKNCoD7Gnbvqhcs9MoeP2j-Cl-aDutWTUzu_FRlEEJ4yZlgZvdJP3hUM2qheK1SGWRs6vZPdsymKBabNwNsEZjm1lJ6MNGuv7jhH6I7QrE-3e74cN4dzJi66vvZoVXg38CwAHWLgkgpl7y4v_GibpbyeYbkX3AM6Khf3RJ1ZYHtbd70aakg6YtWmwQCk7VpOw5R_1-MOiH8CnJRt9351-AGujPT6iIRabvfkytzVOops7UCGqZUCc8zv6X8epQxLdzz_QxDDpnKkkb1mtpo-SKFEMO_IIqVbjNfCBHzgKOjP3oQa4rRWRn9Vd7PrrvVHOQ6WVuwNKdCwKYrKQZ7g-UvPn1VuZgicycJSYYYPZRnVPBUEdwEquz29rqhY7lPM-Bqx7ujWp4D60IV_JT_MAGCbirZh9H9tAsxJeCiWJDaftgkUk2nY9RhZhGGYD9yxBwdhqBfZ9LRCsoxiCEJhukVyKsRXeLnYMGZUku0nVEFejJmtH6lk5iH5cEezQwuQx-hdmIpByFf6WCraJ8XgK5w-cU9Ph41fnL-_v-7x_2oq0yEZCkHtM8RDk2KQAHwOH4mwDkwuANINvxlfRn-kReYVBRAUaLrOe4hESczBJCFz0Ho_f61gvc2h3R4pbQebVJ2KtlALIfTW8hyWYKo0vLt_TlOltI8hODXB4BY8NVdG1IgbcEXET5ezFTxPTTGFv63j5lOoqG9jQpnljTmwxzhjzy_1l_ymT6dinx766XLNsDS3_34-UO_s1BBMt8cus9qTr_zeIBO1d0Ee5Ah84oBxGo1V8SSH1DTjLXbQun-0wK0ljzhN7s4D8U7rRqqXYwOY3awKlHMB9Xp3P5YX3q5THz0699sDvjF5Xm-lis3iPrvvGT4qGu9OQBWrv_-0O3z6INljLiKQcad3y6Od6LRBqfczYSwDMcKyiH6Gz8P35rubHOF_pBgf0T_3Zjr2_PmziYD85Q3rJOIjbepe-hM6LsPSBw0H7JUbECnXMccDGH0F4Wrlq1_R1oNnMO16VQsnI2s2XM6uOVAJNDc-R8U1hcGwWmRcgGcrJv5S7-f2fo4wxWTzjzcQgleNd1euIUXoPEYTaoF__Bb_QIkhz9ly0KYujtljiqTzSBt9O4ss6kAiz2rPmSnVF79hNjyiOWamjM0vCIBUgnV7yXT1iuPjAWnwae8WMPDEq5Q8SZxsXtf0Hr4BlJEPwIyICPnjPcwlhXk4_3XoSqXfXtX9L0bLKct-K7hdXOd9HikNEIufyct9OBhfXRRrHESbKQCmedKrWwa=w1372-h933?auditContext=forDisplay'
 ];
@@ -141,7 +140,7 @@ const BackgroundGallery = () => {
 };
 
 interface LandingPageProps {
-  onSubmit: (message: string, image: string) => void;
+  onSubmit: (message: string, image: string, model: 'current' | 'google') => void;
 }
 
 // Add these styles at the top of the file after the imports
@@ -231,22 +230,29 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
   const [input, setInput] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { accentColor } = useAccentColor();
+  const { accentColor, setAccentColor } = useAccentColor();
   const [isDark, setIsDark] = useState(false);
+  const [model, setModel] = useState<'current' | 'google'>('current');
+  const handleToggleModel = () => setModel(m => m === 'current' ? 'google' : 'current');
+
+  // Set accent color based on model
+  useEffect(() => {
+    if (model === 'google') setAccentColor('blue');
+    else setAccentColor('white');
+  }, [model, setAccentColor]);
 
   // Set the accent color for the trail effect
   useEffect(() => {
-    const color = ACCENT_COLORS[accentColor]?.primary || '#3b82f6';
-    // Convert hex to rgb for the glow
+    let color = model === 'google' ? ACCENT_COLORS.blue.primary : '#e0e0e0';
     function hexToRgb(hex: string) {
       const match = hex.replace('#', '').match(/.{1,2}/g);
-      if (!match) return '59,130,246';
+      if (!match) return '224,224,224';
       const [r, g, b] = match.map(x => parseInt(x, 16));
       return `${r},${g},${b}`;
     }
     document.documentElement.style.setProperty('--trail-accent', color);
     document.documentElement.style.setProperty('--trail-rgb', hexToRgb(color));
-  }, [accentColor]);
+  }, [model]);
 
   // Inject styles on client side
   useEffect(() => {
@@ -294,7 +300,7 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
     if (!input.trim() && !selectedImage) return;
 
     setIsLoading(true);
-    onSubmit(input, selectedImage || '');
+    onSubmit(input, selectedImage || '', model);
   };
 
   return (
@@ -334,7 +340,7 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
             <form onSubmit={handleSubmit} className="w-full max-w-[99vw] sm:max-w-[28rem] mx-auto p-0 sm:p-4 content">
               {/* Upload button above chat input */}
               {!selectedImage && (
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-between gap-2 mb-2">
                   <label className="upload-button">
                     <span className="material-icons text-sm mr-1">Upload image</span>
                     <input
@@ -344,6 +350,19 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
                       className="hidden"
                     />
                   </label>
+                  <div className="flex items-center gap-2">
+                    <span style={{ fontSize: '0.65rem', color: '#888', fontWeight: 400, marginRight: '0.25rem' }}>
+                      Tattoo Artist: 
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleToggleModel}
+                      className={`model-toggle-btn-unified ${model === 'google' ? 'google' : 'current'} px-4 py-2 rounded-full text-sm font-medium transition-colors`}
+                      aria-label="Toggle model"
+                    >
+                      {model === 'current' ?  'OpenAI' : 'Google'}
+                    </button>
+                  </div>
                 </div>
               )}
               <div className="chat-input-container" style={{ position: 'relative', width: '100%' }}>
@@ -368,13 +387,14 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="send-button"
+                  className={`send-button${model === 'current' ? ' openai-send-button' : ''}`}
                   aria-label="Send"
+                  style={model === 'google' ? { background: ACCENT_COLORS.blue.primary, color: '#fff' } : { background: '#fff', color: '#23272f', border: '1px solid #e5e7eb' }}
                 >
                   {isLoading ? (
                     <span className="loading-spinner-icon"></span>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={model === 'google' ? '#fff' : '#23272f'} className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                     </svg>
                   )}
