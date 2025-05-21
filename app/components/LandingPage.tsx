@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
+import exifr from 'exifr';
+import heic2any from 'heic2any';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
@@ -281,23 +283,106 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check if the file is an image
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
+    // Check if the file is an image or HEIC
+    const isImage = file.type.startsWith('image/');
+    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+
+    if (!isImage && !isHeic) {
+      alert('Please upload an image file (JPEG, PNG, HEIC, etc.)');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const imageData = reader.result as string;
-      setSelectedImage(imageData);
-    };
-    reader.readAsDataURL(file);
+    try {
+      let processedFile = file;
+      
+      // Convert HEIC to JPEG if needed
+      if (isHeic) {
+        try {
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.8
+          });
+          
+          // If heic2any returns an array, take the first item
+          processedFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+        } catch (conversionError) {
+          console.error('Error converting HEIC:', conversionError);
+          alert('Error converting HEIC image. Please try a different format.');
+          return;
+        }
+      }
+
+      // Get EXIF orientation data
+      const orientation = await exifr.orientation(processedFile);
+      
+      // Create a new FileReader
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        if (!event.target?.result) return;
+        
+        // Create an image element to handle the rotation
+        const img = document.createElement('img') as HTMLImageElement;
+        img.onload = () => {
+          // Create a canvas to draw the rotated image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) return;
+
+          // Set canvas dimensions based on orientation
+          if (orientation === 6 || orientation === 8) {
+            canvas.width = img.height;
+            canvas.height = img.width;
+          } else {
+            canvas.width = img.width;
+            canvas.height = img.height;
+          }
+
+          // Apply the correct rotation
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          
+          switch (orientation) {
+            case 2: ctx.scale(-1, 1); break;
+            case 3: ctx.rotate(Math.PI); break;
+            case 4: ctx.scale(1, -1); break;
+            case 5: ctx.rotate(Math.PI / 2); ctx.scale(1, -1); break;
+            case 6: ctx.rotate(Math.PI / 2); break;
+            case 7: ctx.rotate(-Math.PI / 2); ctx.scale(1, -1); break;
+            case 8: ctx.rotate(-Math.PI / 2); break;
+            default: break;
+          }
+
+          // Draw the image
+          ctx.drawImage(img, -img.width / 2, -img.height / 2);
+          
+          // Convert to base64
+          const correctedImageData = canvas.toDataURL('image/jpeg');
+          setSelectedImage(correctedImageData);
+        };
+
+        img.src = event.target.result as string;
+      };
+
+      reader.readAsDataURL(processedFile);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      // Fallback to original image if there's an error
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageData = reader.result as string;
+        setSelectedImage(imageData);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() && !selectedImage) return;
+    if (!input.trim()) {
+      return; // Don't submit if there's no input message
+    }
 
     setIsLoading(true);
     onSubmit(input, selectedImage || '', model);
@@ -386,15 +471,24 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
                 />
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className={`send-button${model === 'current' ? ' openai-send-button' : ''}`}
+                  disabled={isLoading || !input.trim()}
+                  className={`send-button${model === 'current' ? ' openai-send-button' : ''} ${!input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Send"
-                  style={model === 'google' ? { background: ACCENT_COLORS.blue.primary, color: '#fff' } : { background: '#fff', color: '#23272f', border: '1px solid #e5e7eb' }}
+                  style={model === 'google' 
+                    ? { background: ACCENT_COLORS.blue.primary, color: '#fff' } 
+                    : { background: '#fff', color: '#23272f', border: '1px solid #e5e7eb' }}
                 >
                   {isLoading ? (
                     <span className="loading-spinner-icon"></span>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={model === 'google' ? '#fff' : '#23272f'} className="w-5 h-5">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      strokeWidth={2} 
+                      stroke={model === 'google' ? '#fff' : '#23272f'} 
+                      className="w-5 h-5"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                     </svg>
                   )}

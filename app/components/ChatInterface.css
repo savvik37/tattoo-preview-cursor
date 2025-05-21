@@ -109,7 +109,6 @@
 }
 
 .send-button {
-  background-color: var(--accent-primary) !important;
   color: white;
   border-radius: 1rem;
   padding: 0.5rem 1rem;
@@ -120,19 +119,13 @@
 }
 
 .send-button:hover {
-  background-color: var(--accent-hover) !important;
+  transform: translateY(-1px);
 }
 
 .send-button:disabled {
-  background-color: var(--accent-primary) !important;
   opacity: 0.7;
   cursor: not-allowed;
-}
-
-.initial-load-form .send-button[style*='background: #fff'] {
-  background: #fff !important;
-  color: #23272f !important;
-  border: 1px solid #e5e7eb !important;
+  transform: none;
 }
 
 .messages-container {
@@ -433,6 +426,7 @@
   background: #fff !important;
   color: #23272f !important;
   border: 1px solid #23272f !important;
+  transform: translateY(-1px);
 }
 
 .openai-user-message .message-content {
