@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
-import { useImageProcessor } from './useImageProcessor';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
@@ -236,6 +235,123 @@ function useClientOnly() {
   }, []);
 
   return isClient;
+}
+
+// Move useImageProcessor hook into this file
+interface ImageProcessorProps {
+  onImageProcessed: (processedImage: string) => void;
+}
+
+function useImageProcessor({ onImageProcessed }: ImageProcessorProps) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const isClient = useClientOnly();
+
+  const processImage = async (file: File) => {
+    if (!isClient) {
+      throw new Error('Image processing is only available on the client side');
+    }
+
+    setIsProcessing(true);
+    try {
+      // Dynamically import the modules only when needed
+      const [exifrModule, heic2anyModule] = await Promise.all([
+        import('exifr'),
+        import('heic2any')
+      ]);
+
+      let processedFile = file;
+      const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || 
+                    file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+
+      // Convert HEIC to JPEG if needed
+      if (isHeic) {
+        try {
+          const convertedBlob = await heic2anyModule.default({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.8
+          });
+          
+          // Convert Blob to File
+          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          processedFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
+            type: 'image/jpeg',
+            lastModified: file.lastModified
+          });
+        } catch (conversionError) {
+          console.error('Error converting HEIC:', conversionError);
+          throw new Error('Error converting HEIC image. Please try a different format.');
+        }
+      }
+
+      // Get EXIF orientation data
+      const orientation = await exifrModule.orientation(processedFile);
+      
+      // Create a new FileReader
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        if (!event.target?.result) return;
+        
+        // Create an image element to handle the rotation
+        const img = document.createElement('img') as HTMLImageElement;
+        img.onload = () => {
+          // Create a canvas to draw the rotated image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) return;
+
+          // Set canvas dimensions based on orientation
+          if (orientation === 6 || orientation === 8) {
+            canvas.width = img.height;
+            canvas.height = img.width;
+          } else {
+            canvas.width = img.width;
+            canvas.height = img.height;
+          }
+
+          // Apply the correct rotation
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          
+          switch (orientation) {
+            case 2: ctx.scale(-1, 1); break;
+            case 3: ctx.rotate(Math.PI); break;
+            case 4: ctx.scale(1, -1); break;
+            case 5: ctx.rotate(Math.PI / 2); ctx.scale(1, -1); break;
+            case 6: ctx.rotate(Math.PI / 2); break;
+            case 7: ctx.rotate(-Math.PI / 2); ctx.scale(1, -1); break;
+            case 8: ctx.rotate(-Math.PI / 2); break;
+            default: break;
+          }
+
+          // Draw the image
+          ctx.drawImage(img, -img.width / 2, -img.height / 2);
+          
+          // Convert to base64
+          const correctedImageData = canvas.toDataURL('image/jpeg');
+          onImageProcessed(correctedImageData);
+        };
+
+        img.src = event.target.result as string;
+      };
+
+      reader.readAsDataURL(processedFile);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      // Fallback to original image if there's an error
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageData = reader.result as string;
+        onImageProcessed(imageData);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return { processImage, isProcessing };
 }
 
 export default function LandingPage({ onSubmit }: LandingPageProps) {
