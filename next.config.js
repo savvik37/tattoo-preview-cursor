@@ -27,6 +27,10 @@ const nextConfig = {
       ...config.resolve.fallback,
       fs: false,
     };
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      'app/hooks',
+    ];
     return config;
   },
 };
