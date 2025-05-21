@@ -3,19 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
-
-// Import the libraries normally
-import exifr from 'exifr';
-import heic2any from 'heic2any';
-
-// Type assertion for heic2any since its type definitions are incorrect
-const heic2anyConverter = heic2any as unknown as (options: {
-  blob: Blob;
-  toType?: string;
-  quality?: number;
-  multiple?: boolean;
-  gifInterval?: number;
-}) => Promise<Blob | Blob[]>;
+import ImageProcessor from './ImageProcessor';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
@@ -246,7 +234,7 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
   const { accentColor, setAccentColor } = useAccentColor();
   const [isDark, setIsDark] = useState(false);
   const [model, setModel] = useState<'current' | 'google'>('current');
-  const handleToggleModel = () => setModel(m => m === 'current' ? 'google' : 'current');
+  const { processImage, isProcessing } = ImageProcessor({ onImageProcessed: setSelectedImage });
 
   // Set accent color based on model
   useEffect(() => {
@@ -291,15 +279,13 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
   }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only run on client side
-    if (typeof window === 'undefined') return;
-
     const file = e.target.files?.[0];
     if (!file) return;
 
     // Check if the file is an image or HEIC
     const isImage = file.type.startsWith('image/');
-    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || 
+                  file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
 
     if (!isImage && !isHeic) {
       alert('Please upload an image file (JPEG, PNG, HEIC, etc.)');
@@ -307,92 +293,10 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
     }
 
     try {
-      let processedFile = file;
-      
-      // Convert HEIC to JPEG if needed
-      if (isHeic) {
-        try {
-          const convertedBlob = await heic2anyConverter({
-            blob: file,
-            toType: 'image/jpeg',
-            quality: 0.8
-          });
-          
-          // Convert Blob to File
-          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
-          processedFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
-            type: 'image/jpeg',
-            lastModified: file.lastModified
-          });
-        } catch (conversionError) {
-          console.error('Error converting HEIC:', conversionError);
-          alert('Error converting HEIC image. Please try a different format.');
-          return;
-        }
-      }
-
-      // Get EXIF orientation data
-      const orientation = await exifr.orientation(processedFile);
-      
-      // Create a new FileReader
-      const reader = new FileReader();
-      
-      reader.onload = async (event) => {
-        if (!event.target?.result) return;
-        
-        // Create an image element to handle the rotation
-        const img = document.createElement('img') as HTMLImageElement;
-        img.onload = () => {
-          // Create a canvas to draw the rotated image
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          if (!ctx) return;
-
-          // Set canvas dimensions based on orientation
-          if (orientation === 6 || orientation === 8) {
-            canvas.width = img.height;
-            canvas.height = img.width;
-          } else {
-            canvas.width = img.width;
-            canvas.height = img.height;
-          }
-
-          // Apply the correct rotation
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          
-          switch (orientation) {
-            case 2: ctx.scale(-1, 1); break;
-            case 3: ctx.rotate(Math.PI); break;
-            case 4: ctx.scale(1, -1); break;
-            case 5: ctx.rotate(Math.PI / 2); ctx.scale(1, -1); break;
-            case 6: ctx.rotate(Math.PI / 2); break;
-            case 7: ctx.rotate(-Math.PI / 2); ctx.scale(1, -1); break;
-            case 8: ctx.rotate(-Math.PI / 2); break;
-            default: break;
-          }
-
-          // Draw the image
-          ctx.drawImage(img, -img.width / 2, -img.height / 2);
-          
-          // Convert to base64
-          const correctedImageData = canvas.toDataURL('image/jpeg');
-          setSelectedImage(correctedImageData);
-        };
-
-        img.src = event.target.result as string;
-      };
-
-      reader.readAsDataURL(processedFile);
+      await processImage(file);
     } catch (error) {
       console.error('Error processing image:', error);
-      // Fallback to original image if there's an error
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageData = reader.result as string;
-        setSelectedImage(imageData);
-      };
-      reader.readAsDataURL(file);
+      alert(error instanceof Error ? error.message : 'Error processing image');
     }
   };
 
@@ -459,7 +363,7 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
                     </span>
                     <button
                       type="button"
-                      onClick={handleToggleModel}
+                      onClick={() => setModel(m => m === 'current' ? 'google' : 'current')}
                       className={`model-toggle-btn-unified ${model === 'google' ? 'google' : 'current'} px-4 py-2 rounded-full text-sm font-medium transition-colors`}
                       aria-label="Toggle model"
                     >
