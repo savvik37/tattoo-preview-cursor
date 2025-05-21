@@ -227,6 +227,17 @@ const styles = `
   }
 `;
 
+// Custom hook to ensure we only run on client side
+function useClientOnly() {
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient;
+}
+
 export default function LandingPage({ onSubmit }: LandingPageProps) {
   const [input, setInput] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -234,16 +245,19 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
   const { accentColor, setAccentColor } = useAccentColor();
   const [isDark, setIsDark] = useState(false);
   const [model, setModel] = useState<'current' | 'google'>('current');
+  const isClient = useClientOnly();
   const { processImage, isProcessing } = ImageProcessor({ onImageProcessed: setSelectedImage });
 
   // Set accent color based on model
   useEffect(() => {
+    if (!isClient) return;
     if (model === 'google') setAccentColor('blue');
     else setAccentColor('white');
-  }, [model, setAccentColor]);
+  }, [model, setAccentColor, isClient]);
 
   // Set the accent color for the trail effect
   useEffect(() => {
+    if (!isClient) return;
     let color = model === 'google' ? ACCENT_COLORS.blue.primary : '#e0e0e0';
     function hexToRgb(hex: string) {
       const match = hex.replace('#', '').match(/.{1,2}/g);
@@ -253,19 +267,21 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
     }
     document.documentElement.style.setProperty('--trail-accent', color);
     document.documentElement.style.setProperty('--trail-rgb', hexToRgb(color));
-  }, [model]);
+  }, [model, isClient]);
 
   // Inject styles on client side
   useEffect(() => {
+    if (!isClient) return;
     const styleSheet = document.createElement('style');
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
     return () => {
       document.head.removeChild(styleSheet);
     };
-  }, []);
+  }, [isClient]);
 
   useEffect(() => {
+    if (!isClient) return;
     const checkDark = () => {
       setIsDark(document.documentElement.classList.contains('dark'));
     };
@@ -276,7 +292,7 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
       window.removeEventListener('storage', checkDark);
       window.removeEventListener('classChange', checkDark);
     };
-  }, []);
+  }, [isClient]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

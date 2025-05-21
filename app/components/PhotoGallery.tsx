@@ -69,14 +69,27 @@ const ConfirmationModal = ({
   );
 };
 
+// Custom hook to ensure we only run on client side
+function useClientOnly() {
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient;
+}
+
 export default function PhotoGallery({ onImageClick, onReset, model, setModel }: PhotoGalleryProps) {
   const [images, setImages] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { accentColor, setAccentColor } = useAccentColor();
+  const isClient = useClientOnly();
 
   useEffect(() => {
+    if (!isClient) return;
     // Check if theme is stored in localStorage
     const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     if (storedTheme) {
@@ -90,10 +103,11 @@ export default function PhotoGallery({ onImageClick, onReset, model, setModel }:
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     }
-  }, []);
+  }, [isClient]);
 
   // Handle new images
   useEffect(() => {
+    if (!isClient) return;
     const handleNewImage = (event: CustomEvent<string>) => {
       const newImage = event.detail;
       setImages(prev => {
@@ -107,9 +121,10 @@ export default function PhotoGallery({ onImageClick, onReset, model, setModel }:
     return () => {
       window.removeEventListener('newGeneratedImage', handleNewImage as EventListener);
     };
-  }, []);
+  }, [isClient]);
 
   const toggleTheme = () => {
+    if (!isClient) return;
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     document.documentElement.classList.remove('light', 'dark');
