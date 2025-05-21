@@ -303,17 +303,27 @@ function useImageProcessor({ onImageProcessed }: ImageProcessorProps) {
           if (!ctx) return;
 
           // Set canvas dimensions based on orientation
-          if (orientation === 6 || orientation === 8) {
-            canvas.width = img.height;
-            canvas.height = img.width;
-          } else {
-            canvas.width = img.width;
-            canvas.height = img.height;
-          }
-
-          // Apply the correct rotation
-          ctx.translate(canvas.width / 2, canvas.height / 2);
+          let width = img.width;
+          let height = img.height;
           
+          // Swap dimensions for 90-degree rotations
+          if (orientation === 5 || orientation === 6 || orientation === 7 || orientation === 8) {
+            [width, height] = [height, width];
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+
+          // Clear the canvas
+          ctx.clearRect(0, 0, width, height);
+          
+          // Save the current context state
+          ctx.save();
+          
+          // Move to the center of the canvas
+          ctx.translate(width / 2, height / 2);
+          
+          // Apply the correct rotation
           switch (orientation) {
             case 2: ctx.scale(-1, 1); break;
             case 3: ctx.rotate(Math.PI); break;
@@ -324,12 +334,15 @@ function useImageProcessor({ onImageProcessed }: ImageProcessorProps) {
             case 8: ctx.rotate(-Math.PI / 2); break;
             default: break;
           }
-
-          // Draw the image
+          
+          // Draw the image centered
           ctx.drawImage(img, -img.width / 2, -img.height / 2);
           
+          // Restore the context state
+          ctx.restore();
+          
           // Convert to base64
-          const correctedImageData = canvas.toDataURL('image/jpeg');
+          const correctedImageData = canvas.toDataURL('image/jpeg', 0.9);
           onImageProcessed(correctedImageData);
         };
 
