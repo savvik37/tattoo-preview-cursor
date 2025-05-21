@@ -304,8 +304,12 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
             quality: 0.8
           });
           
-          // If heic2any returns an array, take the first item
-          processedFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          // Convert Blob to File
+          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          processedFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
+            type: 'image/jpeg',
+            lastModified: file.lastModified
+          });
         } catch (conversionError) {
           console.error('Error converting HEIC:', conversionError);
           alert('Error converting HEIC image. Please try a different format.');
