@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
-import ImageProcessor from './ImageProcessor';
+import { useImageProcessor } from '../hooks/useImageProcessor';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
@@ -246,7 +246,11 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
   const [isDark, setIsDark] = useState(false);
   const [model, setModel] = useState<'current' | 'google'>('current');
   const isClient = useClientOnly();
-  const { processImage, isProcessing } = ImageProcessor({ onImageProcessed: setSelectedImage });
+  const { processImage, isProcessing } = useImageProcessor({
+    onImageProcessed: (processedImage) => {
+      setSelectedImage(processedImage);
+    }
+  });
 
   // Set accent color based on model
   useEffect(() => {
@@ -294,25 +298,21 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
     };
   }, [isClient]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
-
-    // Check if the file is an image or HEIC
-    const isImage = file.type.startsWith('image/');
-    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || 
-                  file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-
-    if (!isImage && !isHeic) {
-      alert('Please upload an image file (JPEG, PNG, HEIC, etc.)');
-      return;
-    }
 
     try {
       await processImage(file);
     } catch (error) {
       console.error('Error processing image:', error);
-      alert(error instanceof Error ? error.message : 'Error processing image');
+      // Fallback to original image if there's an error
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageData = reader.result as string;
+        setSelectedImage(imageData);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
