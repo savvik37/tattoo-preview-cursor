@@ -286,7 +286,8 @@ function useImageProcessor({ onImageProcessed }: ImageProcessorProps) {
 
       // Get EXIF orientation data
       const orientation = await exifrModule.orientation(processedFile);
-      
+      console.log('EXIF Orientation:', orientation); // Debug log
+
       // Create a new FileReader
       const reader = new FileReader();
       
@@ -295,57 +296,42 @@ function useImageProcessor({ onImageProcessed }: ImageProcessorProps) {
         
         // Create an image element to handle the rotation
         const img = document.createElement('img') as HTMLImageElement;
+        
+        // Set crossOrigin to anonymous to avoid CORS issues
+        img.crossOrigin = 'anonymous';
+        
         img.onload = () => {
+          console.log('Original image dimensions:', img.width, 'x', img.height); // Debug log
+          
           // Create a canvas to draw the rotated image
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           
           if (!ctx) return;
 
-          // Set canvas dimensions based on orientation
-          let width = img.width;
-          let height = img.height;
+          // Set canvas dimensions
+          canvas.width = img.width;
+          canvas.height = img.height;
           
-          // Swap dimensions for 90-degree rotations
-          if (orientation === 5 || orientation === 6 || orientation === 7 || orientation === 8) {
-            [width, height] = [height, width];
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-
           // Clear the canvas
-          ctx.clearRect(0, 0, width, height);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
           
-          // Save the current context state
-          ctx.save();
-          
-          // Move to the center of the canvas
-          ctx.translate(width / 2, height / 2);
-          
-          // Apply the correct rotation
-          switch (orientation) {
-            case 2: ctx.scale(-1, 1); break;
-            case 3: ctx.rotate(Math.PI); break;
-            case 4: ctx.scale(1, -1); break;
-            case 5: ctx.rotate(Math.PI / 2); ctx.scale(1, -1); break;
-            case 6: ctx.rotate(Math.PI / 2); break;
-            case 7: ctx.rotate(-Math.PI / 2); ctx.scale(1, -1); break;
-            case 8: ctx.rotate(-Math.PI / 2); break;
-            default: break;
-          }
-          
-          // Draw the image centered
-          ctx.drawImage(img, -img.width / 2, -img.height / 2);
-          
-          // Restore the context state
-          ctx.restore();
+          // Draw the image directly without any transformations
+          ctx.drawImage(img, 0, 0);
           
           // Convert to base64
           const correctedImageData = canvas.toDataURL('image/jpeg', 0.9);
-          onImageProcessed(correctedImageData);
+          
+          // Create a new image to verify the result
+          const verifyImg = new window.Image();
+          verifyImg.onload = () => {
+            console.log('Processed image dimensions:', verifyImg.width, 'x', verifyImg.height); // Debug log
+            onImageProcessed(correctedImageData);
+          };
+          verifyImg.src = correctedImageData;
         };
 
+        // Set the image source
         img.src = event.target.result as string;
       };
 
