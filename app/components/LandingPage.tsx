@@ -3,8 +3,19 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
+
+// Import the libraries normally
 import exifr from 'exifr';
 import heic2any from 'heic2any';
+
+// Type assertion for heic2any since its type definitions are incorrect
+const heic2anyConverter = heic2any as unknown as (options: {
+  blob: Blob;
+  toType?: string;
+  quality?: number;
+  multiple?: boolean;
+  gifInterval?: number;
+}) => Promise<Blob | Blob[]>;
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
@@ -280,6 +291,9 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
   }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -298,7 +312,7 @@ export default function LandingPage({ onSubmit }: LandingPageProps) {
       // Convert HEIC to JPEG if needed
       if (isHeic) {
         try {
-          const convertedBlob = await heic2any({
+          const convertedBlob = await heic2anyConverter({
             blob: file,
             toType: 'image/jpeg',
             quality: 0.8
