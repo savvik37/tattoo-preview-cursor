@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAccentColor, ACCENT_COLORS } from '../context/AccentColorContext';
-import { useImageProcessor } from '../lib/hooks/useImageProcessor';
+import { useImageProcessor } from './useImageProcessor';
 
 // Add placeholder images for the background gallery
 const PLACEHOLDER_IMAGES = [
