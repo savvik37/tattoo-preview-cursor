@@ -153,64 +153,108 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
     setInput('');
     setIsLoading(true);
 
+    let retryCount = 0;
+    const maxRetries = 2;
+
+    const attemptGeneration = async (): Promise<void> => {
+      try {
+        // Use selectedImage as a fallback if lastGeneratedImage is not available
+        const imageToUse = messages.length === 0 ? originalImageRef.current : lastGeneratedImage || selectedImage;
+        
+        if (!imageToUse) {
+          throw new Error('No image available for generation');
+        }
+
+        // Choose the API endpoint based on the selected model
+        const endpoint = model === 'google' ? '/api/google-chat' : '/api/chat';
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 30 second timeout
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: input,
+            image: imageToUse,
+            conversationHistory: messages.map(m => ({
+              role: m.role,
+              content: m.content
+            }))
+          }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          if (response.status === 499) {
+            throw new Error('Request was interrupted. Please try again.');
+          }
+          throw new Error(errorData.error || 'Failed to generate image. Please try again.');
+        }
+
+        const data = await response.json();
+        
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: prev.filter(m => m.role === 'assistant').length === 0
+              ? 'Tattoo generated! You can download your images by accessing the gallery on the top right of the screen or by clicking any image you see, then download on the top right.'
+              : data.message,
+            image: data.image,
+          },
+        ]);
+        
+        setLastGeneratedImage(data.image);
+
+        if (data.image) {
+          window.dispatchEvent(new CustomEvent('newGeneratedImage', { detail: data.image }));
+        }
+      } catch (error) {
+        console.error('Generation error:', error);
+        
+        // Handle specific error cases
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            throw new Error('Request timed out. Please try again.');
+          }
+          if (error.message.includes('interrupted')) {
+            throw new Error('Generation was interrupted. Please try again.');
+          }
+          if (error.message.includes('Failed to fetch')) {
+            throw new Error('Network error. Please check your connection and try again.');
+          }
+        }
+
+        // Retry logic
+        if (retryCount < maxRetries) {
+          retryCount++;
+          console.log(`Retrying generation attempt ${retryCount}...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+          return attemptGeneration();
+        }
+
+        throw error; // If all retries failed, throw the error
+      }
+    };
+
     try {
-      // Use selectedImage as a fallback if lastGeneratedImage is not available
-      const imageToUse = messages.length === 0 ? originalImageRef.current : lastGeneratedImage || selectedImage;
-      
-      if (!imageToUse) {
-        throw new Error('No image available for generation');
-      }
-
-      // Choose the API endpoint based on the selected model
-      const endpoint = model === 'google' ? '/api/google-chat' : '/api/chat';
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: input,
-          image: imageToUse,
-          conversationHistory: messages.map(m => ({
-            role: m.role,
-            content: m.content
-          }))
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate image');
-      }
-
-      const data = await response.json();
-      
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: prev.filter(m => m.role === 'assistant').length === 0
-            ? 'Tattoo generated! You can download your images by accessing the gallery on the top right of the screen or by clicking any image you see, then download on the top right.'
-            : data.message,
-          image: data.image,
-        },
-      ]);
-      
-      // Update the last generated image
-      setLastGeneratedImage(data.image);
-
-      // Emit the new image to be stored in the gallery
-      if (data.image) {
-        window.dispatchEvent(new CustomEvent('newGeneratedImage', { detail: data.image }));
-      }
+      await attemptGeneration();
     } catch (error) {
-      console.error('Error:', error);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'An unexpected error occurred. Please try again.';
+      
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
-          content: error instanceof Error ? error.message : 'Failed to generate image',
+          content: errorMessage,
         },
       ]);
     } finally {
@@ -223,9 +267,8 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
     originalImageRef.current = image;
     setInput(message);
     setIsInitialLoad(false);
-    setModel(landingPageModel); // Set the model from landing page
+    setModel(landingPageModel);
     
-    // Add the initial user message
     const newMessage: Message = {
       role: 'user',
       content: message,
@@ -234,54 +277,97 @@ export default function ChatInterface({ isInitialLoad, setIsInitialLoad, showCha
     setMessages([newMessage]);
     setIsLoading(true);
 
+    let retryCount = 0;
+    const maxRetries = 2;
+
+    const attemptGeneration = async (): Promise<void> => {
+      try {
+        const endpoint = landingPageModel === 'google' ? '/api/google-chat' : '/api/chat';
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 30 second timeout
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: message,
+            image: image,
+            conversationHistory: []
+          }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          if (response.status === 499) {
+            throw new Error('Request was interrupted. Please try again.');
+          }
+          throw new Error(errorData.error || 'Failed to generate image. Please try again.');
+        }
+
+        const data = await response.json();
+        
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: prev.filter(m => m.role === 'assistant').length === 0
+              ? 'Tattoo generated! You can download your images by accessing the gallery on the top right of the screen or by clicking any image you see, then download on the top right.'
+              : data.message,
+            image: data.image,
+          },
+        ]);
+        
+        setLastGeneratedImage(data.image);
+
+        if (data.image) {
+          window.dispatchEvent(new CustomEvent('newGeneratedImage', { detail: data.image }));
+        }
+      } catch (error) {
+        console.error('Generation error:', error);
+        
+        // Handle specific error cases
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            throw new Error('Request timed out. Please try again.');
+          }
+          if (error.message.includes('interrupted')) {
+            throw new Error('Generation was interrupted. Please try again.');
+          }
+          if (error.message.includes('Failed to fetch')) {
+            throw new Error('Network error. Please check your connection and try again.');
+          }
+        }
+
+        // Retry logic
+        if (retryCount < maxRetries) {
+          retryCount++;
+          console.log(`Retrying generation attempt ${retryCount}...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+          return attemptGeneration();
+        }
+
+        throw error; // If all retries failed, throw the error
+      }
+    };
+
     try {
-      // Choose the API endpoint based on the selected model
-      const endpoint = landingPageModel === 'google' ? '/api/google-chat' : '/api/chat';
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message,
-          image: image,
-          conversationHistory: []
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate image');
-      }
-
-      const data = await response.json();
-      
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: prev.filter(m => m.role === 'assistant').length === 0
-            ? 'Tattoo generated! You can download your images by accessing the gallery on the top right of the screen or by clicking any image you see, then download on the top right.'
-            : data.message,
-          image: data.image,
-        },
-      ]);
-      
-      // Update the last generated image
-      setLastGeneratedImage(data.image);
-
-      // Emit the new image to be stored in the gallery
-      if (data.image) {
-        window.dispatchEvent(new CustomEvent('newGeneratedImage', { detail: data.image }));
-      }
+      await attemptGeneration();
     } catch (error) {
-      console.error('Error:', error);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'An unexpected error occurred. Please try again.';
+      
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
-          content: error instanceof Error ? error.message : 'Failed to generate image',
+          content: errorMessage,
         },
       ]);
     } finally {
